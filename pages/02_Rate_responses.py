@@ -115,8 +115,10 @@ if q_discrimination:
             query = query.params(excluded_prompt_ids=excluded_prompt_ids)
             #query = text("SELECT * FROM df_prompts ORDER BY RAND() LIMIT 1")
             result = db_conn.execute(query)
+            print(result)
         
-        sample_row = dict(result.fetchone())
+        sample_row = result.fetchone()
+        print(sample_row)
         prompt_id = sample_row["prompt_id"]
         excluded_prompt_ids.append(prompt_id)
         
