@@ -103,6 +103,8 @@ with st.form(key = "form_editi", clear_on_submit= True):
 
     st.subheader("Prompt")
     prompt_id = sample_row[0]
+    excluded_prompt_ids.append(prompt_id)
+    
     st.write("{} [Source]({})".format(sample_row[6],sample_row[2]))
 
     st.subheader("Edit pre-generated answer")
