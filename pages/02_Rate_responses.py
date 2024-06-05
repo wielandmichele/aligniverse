@@ -9,12 +9,12 @@ import pymysql
 import sqlalchemy
 import os
 
-INSTANCE_CONNECTION_NAME = "xxx"
-DB_USER = "xxx"
-DB_PASS = "xxx"
-DB_NAME = "xxx"
+INSTANCE_CONNECTION_NAME = "aligniverse:us-central1:aligniverse-database"
+DB_USER = "michelewieland"
+DB_PASS = "Kishnsiw8ujw2$$"
+DB_NAME = "survey_database"
 
-file_path = "xxx.json"
+file_path = "aligniverse-d410d1ab5017.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = file_path
 
 # initialize Connector object
