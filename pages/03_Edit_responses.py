@@ -9,16 +9,25 @@ import pymysql
 import sqlalchemy
 import os
 
-INSTANCE_CONNECTION_NAME = "aligniverse:us-central1:aligniverse-database"
-DB_USER = "michelewieland"
-DB_PASS = "Kishnsiw8ujw2$$"
-DB_NAME = "survey_database"
+from google.cloud.sql.connector import Connector
+from google.oauth2 import service_account
+from google.cloud import storage
 
-file_path = "aligniverse-d410d1ab5017.json"
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = file_path
+INSTANCE_CONNECTION_NAME = st.secrets["INSTANCE_CONNECTION_NAME"]
+DB_USER = st.secrets["DB_USER"]
+DB_PASS = st.secrets["DB_PASS"]
+DB_NAME = st.secrets["DB_NAME"]
+
+#file_path = "aligniverse-d410d1ab5017.json"
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = file_path
+
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
+client = storage.Client(credentials=credentials)
 
 # initialize Connector object
-connector = Connector()
+connector = Connector(credentials=credentials)
 
 def getconn():
     # function to return the database connection object
@@ -53,6 +62,14 @@ def insert_editing(question_id, prompt_id, answer_edited):
         )
 )
 
+def save_to_db():
+    new_text = st.session_state.key_edited_answer
+    insert_editing(
+            sample_row["question_id"], # question_id
+            sample_row["prompt_id"],   # prompt_id
+            new_text
+        )
+
 ##start survey
 survey = ss.StreamlitSurvey("edit_survey")
 st.title("Edit pre-generated LLM responses")
@@ -73,18 +90,23 @@ elif q_discrimination == "Sexual orientation":
     type_info = "sexual orientation"
     stereotypical_bias_info = "Stereotypical bias regarding {}: refers to beliefs about a person’s abilities and interests based on their {}. [Source](https://arxiv.org/pdf/2308.05374)".format(type_info, type_info)
 
-with st.form(key = "form_editing", clear_on_submit=True):
+excluded_prompt_ids = [0]
+
+with st.form(key = "form_editi", clear_on_submit= True):
     with pool.connect() as db_conn:
-        query = text("SELECT * FROM df_prompts ORDER BY RAND() LIMIT 1")
+        query = text("SELECT * FROM df_prompts WHERE prompt_id NOT IN :excluded_prompt_ids ORDER BY RAND() LIMIT 1")
+        query = query.params(excluded_prompt_ids=excluded_prompt_ids)
+        #query = text("SELECT * FROM df_prompts ORDER BY RAND() LIMIT 1")
         result = db_conn.execute(query)
     
     sample_row = result.fetchone()
 
     st.subheader("Prompt")
+    prompt_id = sample_row["prompt_id"]
     st.write("{} [Source]({})".format(sample_row["question"],sample_row["dataset_source"]))
 
     st.subheader("Edit pre-generated answer")
-    edited_answer = survey.text_area("Answer:", value = sample_row["answer"], id = "answer_edit", max_chars = 1000, help = "You can remove and add words to your liking.", height = 230)
+    answer_edited = st.text_area("Answer:", value = sample_row["answer"], key = "key_edited_answer", max_chars = 1000, help = "You can write your own response to your liking.")
     
     st.write("""
     Edit the pre-generated answer such that it:
@@ -103,14 +125,10 @@ with st.form(key = "form_editing", clear_on_submit=True):
     - Emotional sensitivity and openness: refers to demonstrating sensitivity to individual feelings and perspectives, and fostering open, non-confrontational dialogue. [Source](https://arxiv.org/pdf/2402.11886)
     - Helpfulness: refers to the generated text being relevant to the user’s question and providing a clear, complete, and detailed answer. [Source](https://aclanthology.org/2023.emnlp-industry.62.pdf)
     """)
-    insert_editing(
-            sample_row["question_id"], # question_id
-            sample_row["prompt_id"],   # prompt_id
-            edited_answer
-    )
-    
-    submitted = st.form_submit_button("Submit and View Next")
 
+    st.form_submit_button("Submit and View Next", on_click = save_to_db)
+
+connector.close()
 st.write("In case you'd like to do the other tasks, you can go back to the overview.")
 if st.button("Back to overview"):
     st.switch_page("pages/01_Overview.py")
