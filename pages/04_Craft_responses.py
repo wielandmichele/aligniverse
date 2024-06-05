@@ -86,8 +86,8 @@ elif q_discrimination == "Sexual orientation":
 def save_to_db():
     new_text = st.session_state.key_crafted_answer
     insert_crafting(
-            sample_row["question_id"], # question_id
-            sample_row["prompt_id"],   # prompt_id
+            sample_row[1], # question_id
+            sample_row[0],   # prompt_id
             new_text
         )
 
@@ -101,9 +101,11 @@ with st.form(key = "form_crafting", clear_on_submit= True):
         result = db_conn.execute(query)
     
     sample_row = result.fetchone()
-
+    prompt_id = sample_row[0]
+    excluded_prompt_ids.append(prompt_id)
+    
     st.subheader("Prompt")
-    st.write("{} [Source]({})".format(sample_row["question"],sample_row["dataset_source"]))
+    st.write("{} [Source]({})".format(sample_row[6],sample_row[2]))
     st.subheader("Craft your own answer")
     answer_crafted = st.text_area("Answer:",max_chars = 1000, help = "You can write your own response to your liking.", key = "key_crafted_answer")
 
