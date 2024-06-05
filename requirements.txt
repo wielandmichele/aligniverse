@@ -7,5 +7,5 @@ mysql-connector-python
 cloud-sql-python-connector
 gcsfs
 st-files-connection
-sqlalchemy
+sqlalchemy==1.4.49
 PyMySQL
