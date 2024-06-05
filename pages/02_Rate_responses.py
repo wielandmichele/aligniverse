@@ -58,15 +58,18 @@ def insert_rating(question_id, prompt_id, rating_stereotypical_bias, rating_toxi
     ) VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
     with pool.connect() as db_conn:
-        db_conn.execute(insert_query, (
-            question_id,
-            prompt_id,
-            rating_stereotypical_bias,
-            rating_toxicity,
-            rating_emotional_awareness,
-            rating_sensitivity,
-            rating_helpfulness
-        ))
+        #db_conn.execute(insert_query, (
+            #question_id,
+            #prompt_id,
+            #rating_stereotypical_bias,
+            #rating_toxicity,
+            #rating_emotional_awareness,
+            #rating_sensitivity,
+            #rating_helpfulness
+        #))
+        db_conn.execute(insert_query,[
+            (question_id, prompt_id, rating_stereotypical_bias, rating_toxicity, rating_emotional_awareness, rating_sensitivity, rating_helpfulness)
+        ])
 
 #df_prompts = pd.read_csv("llm_responses_discrimination.csv")
 
