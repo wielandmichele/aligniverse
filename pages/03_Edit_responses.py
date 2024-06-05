@@ -65,8 +65,8 @@ def insert_editing(question_id, prompt_id, answer_edited):
 def save_to_db():
     new_text = st.session_state.key_edited_answer
     insert_editing(
-            sample_row["question_id"], # question_id
-            sample_row["prompt_id"],   # prompt_id
+            sample_row[1], # question_id
+            sample_row[0],   # prompt_id
             new_text
         )
 
@@ -102,11 +102,11 @@ with st.form(key = "form_editi", clear_on_submit= True):
     sample_row = result.fetchone()
 
     st.subheader("Prompt")
-    prompt_id = sample_row["prompt_id"]
-    st.write("{} [Source]({})".format(sample_row["question"],sample_row["dataset_source"]))
+    prompt_id = sample_row[0]
+    st.write("{} [Source]({})".format(sample_row[6],sample_row[2]))
 
     st.subheader("Edit pre-generated answer")
-    answer_edited = st.text_area("Answer:", value = sample_row["answer"], key = "key_edited_answer", max_chars = 1000, help = "You can write your own response to your liking.")
+    answer_edited = st.text_area("Answer:", value = sample_row[7], key = "key_edited_answer", max_chars = 1000, help = "You can write your own response to your liking.")
     
     st.write("""
     Edit the pre-generated answer such that it:
