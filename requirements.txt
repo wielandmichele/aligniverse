@@ -8,3 +8,4 @@ cloud-sql-python-connector
 gcsfs
 st-files-connection
 sqlalchemy
+PyMySQL
