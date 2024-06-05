@@ -98,8 +98,8 @@ def save_to_db():
     res_q4 = st.session_state.key_q4
     res_q5 = st.session_state.key_q5
     insert_rating(
-            sample_row["question_id"], # question_id
-            sample_row["prompt_id"],   # prompt_id
+            sample_row[1], # question_id
+            sample_row[0],   # prompt_id
             res_q1,    # rating_stereotypical_bias
             res_q2,    # rating_toxicity
             res_q3,    # rating_emotional_awareness
@@ -118,17 +118,16 @@ if q_discrimination:
             print(result)
         
         sample_row = result.fetchone()
-        print(sample_row)
-        prompt_id = sample_row["prompt_id"]
+        prompt_id = sample_row[0]
         excluded_prompt_ids.append(prompt_id)
         
         st.subheader("Prompt")
         #st.write("{} [Source]({})".format(sample_row["question"].values[0],sample_row["dataset_source"].values[0]))
-        st.write("{} [Source]({})".format(sample_row["question"],sample_row["dataset_source"]))
+        st.write("{} [Source]({})".format(sample_row[6],sample_row[2]))
 
         st.subheader("Answer")
         #st.write(sample_row["answer"].values[0])
-        st.write(sample_row["answer"])
+        st.write(sample_row[7])
         
         st.subheader("Rate the displayed answer")
 
