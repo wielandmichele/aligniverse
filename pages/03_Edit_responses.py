@@ -46,16 +46,18 @@ pool = sqlalchemy.create_engine(
     creator=getconn,
 )
 
-def insert_editing(question_id, prompt_id, answer_edited):
+def insert_editing(participant_id, question_id, prompt_id, answer_edited):
     insert_query = """
     INSERT INTO df_edits (
+        participant_id,
         question_id,
         prompt_id,
         answer_edited
-    ) VALUES (%s, %s, %s)
+    ) VALUES (%s, %s, %s, %s)
     """
     with pool.connect() as db_conn:
         db_conn.execute(insert_query, (
+            participant_id,
             question_id,
             prompt_id,
             answer_edited
@@ -65,6 +67,7 @@ def insert_editing(question_id, prompt_id, answer_edited):
 def save_to_db():
     new_text = st.session_state.key_edited_answer
     insert_editing(
+            st.session_state['participant_id'],
             sample_row[1], # question_id
             sample_row[0],   # prompt_id
             new_text
@@ -100,11 +103,11 @@ with st.form(key = "form_editi", clear_on_submit= True):
         result = db_conn.execute(query)
     
     sample_row = result.fetchone()
-
-    st.subheader("Prompt")
     prompt_id = sample_row[0]
     excluded_prompt_ids.append(prompt_id)
-    
+
+    st.subheader("Prompt")
+    prompt_id = sample_row["prompt_id"]
     st.write("{} [Source]({})".format(sample_row[6],sample_row[2]))
 
     st.subheader("Edit pre-generated answer")

@@ -43,25 +43,26 @@ pool = sqlalchemy.create_engine(
     creator=getconn,
 )
 
-def insert_demographics(age, gender_identity, country_of_residence, ancestry, ethnicity):
-    insert_query = """
-    INSERT INTO df_participants (
-        age,
-        gender_identity,
-        country_of_residence,
-        ancestry,
-        ethnicity
-    ) VALUES (%s, %s, %s, %s, %s)
-    """
-    with pool.connect() as db_conn:
-        db_conn.execute(insert_query, (
-            age,
-            gender_identity,
-            country_of_residence,
-            ancestry,
-            ethnicity
-        )
-    )
+def update_participant(participant_id, age, gender_identity, country_of_residence, ancestry, ethnicity):
+    update_query = text("""
+    UPDATE df_participants
+    SET age = :age,
+        gender_identity = :gender_identity,
+        country_of_residence = :country_of_residence,
+        ancestry = :ancestry,
+        ethnicity = :ethnicity
+    WHERE participant_id = :participant_id
+    """)
+    with pool.connect() as connection:
+        connection.execute(update_query, {
+            'participant_id': participant_id,
+            'age': age,
+            'gender_identity': gender_identity,
+            'country_of_residence': country_of_residence,
+            'ancestry': ancestry,
+            'ethnicity': ethnicity
+        })
+
 ##start survey
 survey = ss.StreamlitSurvey("demographics_survey")
 
@@ -108,7 +109,8 @@ if not all([q1_demo, q2_demo, q3_demo, q4_demo, q5_demo]):
 
 elif all([q1_demo, q2_demo, q3_demo, q4_demo, q5_demo]):
     if st.button("Submit"):
-        insert_demographics(
+        update_participant(
+            st.session_state['participant_id'], #participant
             q1_demo, #age
             q2_demo, #gender identity
             q3_demo, #country of residence
@@ -117,3 +119,4 @@ elif all([q1_demo, q2_demo, q3_demo, q4_demo, q5_demo]):
         )
         st.title("Thank you for participating!")
         st.balloons()
+        

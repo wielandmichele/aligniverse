@@ -46,16 +46,18 @@ pool = sqlalchemy.create_engine(
     creator=getconn,
 )
 
-def insert_crafting(question_id, prompt_id, answer_crafted):
+def insert_crafting(participant_id, question_id, prompt_id, answer_crafted):
     insert_query = """
     INSERT INTO df_crafts (
+        participant_id,
         question_id,
         prompt_id,
         answer_crafted
-    ) VALUES (%s, %s, %s)
+    ) VALUES (%s, %s, %s, %s)
     """
     with pool.connect() as db_conn:
         db_conn.execute(insert_query, (
+            participant_id,
             question_id,
             prompt_id,
             answer_crafted
@@ -86,6 +88,7 @@ elif q_discrimination == "Sexual orientation":
 def save_to_db():
     new_text = st.session_state.key_crafted_answer
     insert_crafting(
+            st.session_state['participant_id'],
             sample_row[1], # question_id
             sample_row[0],   # prompt_id
             new_text

@@ -17,9 +17,6 @@ DB_USER = st.secrets["DB_USER"]
 DB_PASS = st.secrets["DB_PASS"]
 DB_NAME = st.secrets["DB_NAME"]
 
-#file_path = "aligniverse-d410d1ab5017.json"
-#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = file_path
-
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"]
 )
@@ -45,9 +42,10 @@ pool = sqlalchemy.create_engine(
     creator=getconn,
 )
 
-def insert_rating(question_id, prompt_id, rating_stereotypical_bias, rating_toxicity, rating_emotional_awareness, rating_sensitivity, rating_helpfulness):
+def insert_rating(participant_id,question_id, prompt_id, rating_stereotypical_bias, rating_toxicity, rating_emotional_awareness, rating_sensitivity, rating_helpfulness):
     insert_query = """
     INSERT INTO df_ratings (
+        participant_id,
         question_id,
         prompt_id,
         rating_stereotypical_bias,
@@ -55,10 +53,11 @@ def insert_rating(question_id, prompt_id, rating_stereotypical_bias, rating_toxi
         rating_emotional_awareness,
         rating_sensitivity,
         rating_helpfulness
-    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
     with pool.connect() as db_conn:
         db_conn.execute(insert_query, (
+            participant_id,
             question_id,
             prompt_id,
             rating_stereotypical_bias,
@@ -67,8 +66,6 @@ def insert_rating(question_id, prompt_id, rating_stereotypical_bias, rating_toxi
             rating_sensitivity,
             rating_helpfulness
         ))
-
-#df_prompts = pd.read_csv("llm_responses_discrimination.csv")
 
 st.title("Rate pre-generated responses")
 st.write("In the following section, you will see different prompts and their corresponding answers. Your task is to rate the answers based on the displayed criteria. We generated the answers using a Large Language Model (LLM). Here are the details of the model we used: [Wizard-Vicuna-7B-Uncensored-GPTQ](https://huggingface.co/TheBloke/Wizard-Vicuna-7B-Uncensored-GPTQ)")
@@ -98,13 +95,14 @@ def save_to_db():
     res_q4 = st.session_state.key_q4
     res_q5 = st.session_state.key_q5
     insert_rating(
-            sample_row[1], # question_id
-            sample_row[0],   # prompt_id
-            res_q1,    # rating_stereotypical_bias
-            res_q2,    # rating_toxicity
-            res_q3,    # rating_emotional_awareness
-            res_q4,    # rating_sensitivity
-            res_q5     # rating_helpfulness
+        st.session_state['participant_id'], #participant_id
+        sample_row[1], # question_id
+        sample_row[0],   # prompt_id
+        res_q1,    # rating_stereotypical_bias
+        res_q2,    # rating_toxicity
+        res_q3,    # rating_emotional_awareness
+        res_q4,    # rating_sensitivity
+        res_q5     # rating_helpfulness
         )
 excluded_prompt_ids = [0]
 
@@ -115,7 +113,6 @@ if q_discrimination:
             query = query.params(excluded_prompt_ids=excluded_prompt_ids)
             #query = text("SELECT * FROM df_prompts ORDER BY RAND() LIMIT 1")
             result = db_conn.execute(query)
-            print(result)
         
         sample_row = result.fetchone()
         prompt_id = sample_row[0]
