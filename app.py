@@ -1,9 +1,16 @@
 import streamlit as st
 import streamlit_survey as ss
-import streamlit_scrollable_textbox as stx
 import json
 import pandas as pd
-import time
+from sqlalchemy import text
+from st_files_connection import FilesConnection
+import pymysql
+import sqlalchemy
+import os
+
+from google.cloud.sql.connector import Connector
+from google.oauth2 import service_account
+from google.cloud import storage
 
 ##set config
 st.set_page_config(initial_sidebar_state="collapsed")
@@ -46,9 +53,49 @@ if st.button("Review general information and consent form"):
 consent1 = survey.checkbox("I have read the terms and hereby give my consent to participate in the study.")
 consent2 = survey.checkbox("I confirm that I am at least 18 years old.")
 
+INSTANCE_CONNECTION_NAME = st.secrets["INSTANCE_CONNECTION_NAME"]
+DB_USER = st.secrets["DB_USER"]
+DB_PASS = st.secrets["DB_PASS"]
+DB_NAME = st.secrets["DB_NAME"]
+
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
+client = storage.Client(credentials=credentials)
+connector = Connector(credentials=credentials)
+
+def getconn():
+    # function to return the database connection object
+    conn = connector.connect(
+        INSTANCE_CONNECTION_NAME,
+        "pymysql",
+        user=DB_USER,
+        password=DB_PASS,
+        db=DB_NAME,
+    )
+    return conn
+
+# create connection pool
+pool = sqlalchemy.create_engine(
+    "mysql+pymysql://",
+    creator=getconn,
+)
+
+def insert_participant_and_get_id():
+    with pool.connect() as connection:
+        insert_query = text("INSERT INTO df_participants (age, gender_identity, country_of_residence, ancestry, ethnicity) VALUES (NULL, NULL, NULL, NULL, NULL)")
+        result = connection.execute(insert_query)
+        last_id_query = text("SELECT LAST_INSERT_ID()")
+        last_id_result = connection.execute(last_id_query)
+        last_id = last_id_result.scalar()
+        
+        return last_id
+
 if not all([consent1, consent2]):
     st.write("Please give your consent by ticking both boxes.")
 
 elif all([consent1, consent2]):
     if st.button("Let's create a better dataset!"):
+        last_inserted_id = insert_participant_and_get_id()
+        st.session_state['participant_id'] = last_inserted_id
         st.switch_page("pages/01_Overview.py")
