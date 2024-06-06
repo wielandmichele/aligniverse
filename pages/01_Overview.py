@@ -28,4 +28,4 @@ if st.button("Let's write!"):
 st.divider()
 
 if st.button("End participation"):
-    st.switch_page("pages/04_Demographics.py")
+    st.switch_page("pages/Demographics.py")
