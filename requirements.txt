@@ -6,5 +6,5 @@ st-gsheets-connection
 mysql-connector-python
 cloud-sql-python-connector
 gcsfs
-sqlalchemy
+sqlalchemy==1.4.49
 st-files-connection
