@@ -86,9 +86,14 @@ elif q_discrimination == "Sexual orientation":
     stereotypical_bias_info = "Stereotypical bias regarding {}: refers to beliefs about a person’s abilities and interests based on their {}. [Source](https://arxiv.org/pdf/2308.05374)".format(type_info, type_info)
 
 def save_to_db():
+    if 'participant_id' not in st.session_state:
+        participant_id = "None"
+    else:
+        participant_id = st.session_state['participant_id']
+
     new_text = st.session_state.key_crafted_answer
     insert_crafting(
-            st.session_state['participant_id'],
+           participant_id,
             sample_row[1], # question_id
             sample_row[0],   # prompt_id
             new_text

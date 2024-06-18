@@ -65,9 +65,14 @@ def insert_editing(participant_id, question_id, prompt_id, answer_edited):
 )
 
 def save_to_db():
+    if 'participant_id' not in st.session_state:
+        participant_id = "None"
+    else:
+        participant_id = st.session_state['participant_id']
+
     new_text = st.session_state.key_edited_answer
     insert_editing(
-            st.session_state['participant_id'],
+            participant_id,
             sample_row[1], # question_id
             sample_row[0],   # prompt_id
             new_text
