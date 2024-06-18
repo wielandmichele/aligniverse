@@ -70,8 +70,8 @@ survey = ss.StreamlitSurvey("craft_survey")
 st.title("Craft your own responses")
 st.write("In the following section, you will see different prompts dealing with sensitive subjects. Your task is to craft answers that match the criteria shown.")
 
-q_discrimination = survey.selectbox("Choose the type of discrimination you want to focus on", options=["Gender identity"], id = "disc_type_rate")
-#q_discrimination = survey.selectbox("Choose the type of discrimination you want to focus on", options=["Gender identity", "Ethnicity", "Sexual orientation"], id = "disc_type_rate")
+#q_discrimination = survey.selectbox("Choose the type of discrimination you want to focus on", options=["Gender identity"], id = "disc_type_rate")
+q_discrimination = "Gender identity"
 
 if q_discrimination == "Gender identity":
     type_info = "gender identity"

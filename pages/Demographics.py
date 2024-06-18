@@ -100,12 +100,29 @@ st.write("Your ratings will contribute to the development of an open-source data
 
 q1_demo = survey.selectbox("Which age group do you belong to?", options=age_groups, id="Q1_demo", index=None)
 q2_demo = survey.selectbox("What pronouns do you use to identify yourself?", options=pronouns, id="Q2_demo", index=None)
-q3_demo = survey.multiselect("Which is your country of residence?", options=list_countries, id="Q3_demo")
-q4_demo = survey.multiselect("Where do your ancestors (e.g., great-grandparents) come from?", options=list_countries, id="Q4_demo")
-q5_demo = survey.multiselect("Which racial group(s) do you identify with?", options=racial_groups, id="Q5_demo")
+
+q3_demo = survey.multiselect("Which is your country of residence?", options=list_countries, id="Q3_demo", max_selections = 3)
+q3_demo_str = json.dumps(q3_demo)
+
+q4_demo = survey.multiselect("Where do your ancestors (e.g., great-grandparents) come from?", options=list_countries, id="Q4_demo", max_selections = 3)
+q4_demo_str = json.dumps(q4_demo)
+
+q5_demo = survey.multiselect("Which racial group(s) do you identify with?", options=racial_groups, id="Q5_demo", max_selections = 3)
+q5_demo_str = json.dumps(q5_demo)
+
+def get_last_id():
+    with pool.connect() as connection:
+        last_id_query = text("SELECT LAST_INSERT_ID()")
+        last_id_result = connection.execute(last_id_query)
+        last_id = last_id_result.scalar()
+        return last_id
+
+if 'participant_id' not in st.session_state:
+    last_id = get_last_id()
+    st.session_state['participant_id'] = last_id
 
 if not all([q1_demo, q2_demo, q3_demo, q4_demo, q5_demo]):
-    st.write("Please select one option for every question. You always have the option not to declare.")
+    st.write("Please select at least one option for every question. You always have the option not to declare.")
 
 elif all([q1_demo, q2_demo, q3_demo, q4_demo, q5_demo]):
     if st.button("Submit"):
@@ -113,10 +130,9 @@ elif all([q1_demo, q2_demo, q3_demo, q4_demo, q5_demo]):
             st.session_state['participant_id'], #participant
             q1_demo, #age
             q2_demo, #gender identity
-            q3_demo, #country of residence
-            q4_demo, #ancestry
-            q5_demo  #ethnicity
+            q3_demo_str, #country of residence
+            q4_demo_str, #ancestry
+            q5_demo_str  #ethnicity
         )
-        st.title("Thank you for participating!")
-        st.balloons()
+        st.switch_page("pages/End_participation.py")
         

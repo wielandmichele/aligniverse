@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import streamlit_survey as ss
 import json
 import pandas as pd
@@ -76,10 +76,10 @@ def save_to_db():
 ##start survey
 survey = ss.StreamlitSurvey("edit_survey")
 st.title("Edit pre-generated LLM responses")
-st.write("In the following section, you will see different prompts and their corresponding answers. Your task is to edit the answers based on the displayed criteria. We generated the answers using a Large Language Model (LLM). Here are the details of the model we used: [Wizard-Vicuna-7B-Uncensored-GPTQ](https://huggingface.co/TheBloke/Wizard-Vicuna-7B-Uncensored-GPTQ)")
+st.write("In the following section, you will see different prompts and their corresponding answers. Your task is to edit the answers based on the displayed criteria. We generated the answers using a Large Language Model (LLM) that has not been aligned yet, allowing us to study its responses to our questions. Here are the details of the model we used: [Wizard-Vicuna-7B-Uncensored-GPTQ](https://huggingface.co/TheBloke/Wizard-Vicuna-7B-Uncensored-GPTQ)")
 
-q_discrimination = survey.selectbox("Choose the type of discrimination you want to focus on", options=["Gender identity"], id = "disc_type_rate")
-#q_discrimination = survey.selectbox("Choose the type of discrimination you want to focus on", options=["Gender identity", "Ethnicity", "Sexual orientation"], id = "disc_type_rate")
+#q_discrimination = survey.selectbox("Choose the type of discrimination you want to focus on", options=["Gender identity"], id = "disc_type_rate")
+q_discrimination = "Gender identity"
 
 if q_discrimination == "Gender identity":
     type_info = "gender identity"
