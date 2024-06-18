@@ -90,7 +90,7 @@ elif q_discrimination == "Sexual orientation":
 
 def save_to_db():
     if 'participant_id' not in st.session_state:
-        participant_id = "None"
+        participant_id = 0
     else:
         participant_id = st.session_state['participant_id']
 
@@ -109,25 +109,23 @@ def save_to_db():
         res_q4,    # rating_sensitivity
         res_q5     # rating_helpfulness
         )
-excluded_prompt_ids = [0]
+excluded_question_ids = [0]
 
 with st.form(key = "form_rating", clear_on_submit= True):
     with pool.connect() as db_conn:
-        query = text("SELECT * FROM df_prompts WHERE prompt_id NOT IN :excluded_prompt_ids ORDER BY RAND() LIMIT 1")
-        query = query.params(excluded_prompt_ids=excluded_prompt_ids)
-        #query = text("SELECT * FROM df_prompts ORDER BY RAND() LIMIT 1")
+        query = text("SELECT * FROM df_prompts WHERE question_id NOT IN :excluded_question_ids ORDER BY RAND() LIMIT 1")
+        query = query.params(excluded_question_ids=excluded_question_ids)
         result = db_conn.execute(query)
     
     sample_row = result.fetchone()
-    prompt_id = sample_row[0]
-    excluded_prompt_ids.append(prompt_id)
+    question_id = sample_row[1]
+    excluded_question_ids.append(question_id)
     
     st.subheader("Prompt")
     #st.write("{} [Source]({})".format(sample_row["question"].values[0],sample_row["dataset_source"].values[0]))
     st.write("{} [Source]({})".format(sample_row[6],sample_row[2]))
 
     st.subheader("Answer")
-    #st.write(sample_row["answer"].values[0])
     st.write(sample_row[7])
     
     st.subheader("Rate the displayed answer")
