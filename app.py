@@ -19,40 +19,69 @@ st.set_page_config(initial_sidebar_state="collapsed")
 ##start survey
 survey = ss.StreamlitSurvey("Survey Aligniverse")
 
-st.title("Welcome at Aligniverse")
+st.title("Welcome to Aligniverse")
     
-text1 = "Hi - great to see you today! Are you wondering what Aligniverse is? Our mission involves collecting data to align Large Language Models (LLMs) in a way that fosters positivity and reduces discrimination, particularly towards minority groups."
+text1 = "Hi, great to see you today! Aligniverse is a research project with the mission to help align Large Language Models (LLMs) in a way that fosters positivity and reduces discrimination towards minority groups."
 st.write(text1)
 
-text2 = "Large Language Models (LLMs) are advanced computer programs designed to understand and generate human-like text based on the data they have been trained on. They can answer questions, write essays, and even engage in conversations. Alignment refers to the process of ensuring that these models behave in a way that is consistent with human values and ethical principles. This means teaching the models to respond in ways that are positive, helpful, and free from bias or discrimination."
+text2 = "LLMs are advanced computer programs designed to understand and generate human-like text based on the data they have been trained on. Alignment refers to the process of ensuring that these models behave in a way that is consistent with human values and ethical principles. In light of this, we need your help – how can we guide LLMs to answer controversial questions appropriately?"
 st.write(text2)
 
-text3 = "We're curious about your opinion. How do you envision an LLM responding to sensitive questions? Your participation in our study would be fantastic. Throughout the study, you will review different texts created by Large language models (LLMs) that cover sensitive topics. Your task will be to evaluate these texts based on several criteria. We will publish these ratings as an alignment dataset and share it with the community. This dataset can be utilized by practitioners to improve the alignment of LLMs."
+text3 = "Join our study to review and evaluate LLM-generated texts on sensitive topics. We will publish the collected ratings as an alignment dataset for the community."
 st.write(text3)
 
-text4 = "Participating typically takes between 10 and 30 minutes. Rating one pre-generated text is expected to take 10 minutes. You're welcome to rate as many texts as you prefer, and we truly appreciate your willingness to contribute."
+text4 = "Participating typically takes between 10 and 30 minutes. You can rate as many texts as you prefer, and we appreciate your willingness to contribute."
 st.write(text4)
 
 st.divider()
 
-st.write("We are committed to safeguarding your privacy and making your participation enjoyable. Please review the study terms.")
+st.subheader("Participant information and consent form")
+st.write("We are committed to safeguarding your privacy. Please review the study terms.")
 if st.button("Review general information and consent form"):
     #st.switch_page("pages/Study_terms.py")
     
-    content = """Dear participants, we invite you to take part in our research study. You will find all relevant information in the participant information form below. Please review it carefully, and we are available for any questions you may have.
+    content = """**Participant information and consent form for Aligniverse** 
+    Dear participants, we invite you to take part in our research study. You will find all relevant information in the participant information form below. Please review it carefully, and we are available for any questions you may have.
     Our goal is to recruit about 10,000 participants across more than five locations. At the Technical University of Munich (TUM), we intend to recruit around 1,000 participants. The study was planned by TUM and will be carried out in cooperation with Eidgenössiche Technische Hochschule (ETH), with funding from our institute.
+    Participation in the study is voluntary. If you do not wish to participate or if you later withdraw your consent, you will not suffer any disadvantages.
     
-    Why do we conduct this study?
+    **Why do we conduct this study?**
     Our mission involves collecting data to align Large Language Models (LLMs) in a way that fosters positivity and reduces discrimination, particularly towards minority groups. In light of this, we're curious about your opinion. How do you envision an LLM responding to sensitive questions? 
-
     Throughout the study, you will review different texts created by large language models (LLMs) that cover sensitive topics. Your task will be to evaluate these texts based on several criteria. We will publish these ratings as an alignment dataset and share it with the community. This dataset can be utilized by practitioners to improve the alignment of LLMs.
+    
+    **How does the study proceed?**
+    Participating typically takes between 10 and 30 minutes. Rating one pre-generated text is expected to take 10 minutes. You're welcome to rate as many texts as you prefer, and we truly appreciate your willingness to contribute.
+    
+    **Is there a personal benefit from participating in this study?**
+    You will not benefit from participating in this study. However, the results of the study may help other people in the future.
+    What risks are associated with participating in the study?
+    The texts shown may contain stereotypes and discrimination, which may evoke negative feelings in you. For any questions and suggestions regarding the texts, you can contact us anytime at the email address mwieland@ethz.ch. In emergencies, please contact the following organizations:
+    (1) Germany: Telefonseelsorge (telephone counseling) at +49 800 111 0 111
+    (2) Switzerland: Dargebotene Hand at +41 143
+
+    **Who can I contact if I have further questions?**
+    If you have further questions, please contact: Michèle Wieland, mwieland@ethz.ch
+    
+    **Information on data protection**
+    In this study, Orestis Papakyriakopoulos is responsible for data processing. The legal basis for processing is personal consent (Art. 6 para. 1 lit. a, Art. 9 para. 2 lit. a GDPR). The data will be treated confidentially at all times. The data will be collected solely for the purpose of the study described above and will only be used within this framework. We do not collect personal data. We do collect additional sensitive personal data. These include age, gender identification, country of residence, ancestry, and ethnic affiliation. All data will be collected anonymously. This means that no one, including the study leaders, can determine to whom the data belongs. 
+    The data will be stored on a server of TUM. We do not transfer your data to other institutions in Germany, the EU, or to a third country outside the EU, nor to an international organization. The research data may be used for scientific publications and/or made available to other researchers in scientific databases indefinitely. The data will be used in a form that does not allow any conclusions to be drawn about the individual study participants (anonymized). 
+    Consent to the processing of your data is voluntary. You can withdraw your consent at any time without providing reasons and without any disadvantages for you. After withdrawal, no further data will be collected. The lawfulness of the processing carried out based on the consent until the withdrawal remains unaffected. You have the right to obtain information about the data, including a free copy. Furthermore, you can request the correction, blocking, restriction of processing, or deletion of the data, and, if applicable, the transfer of the data. In these cases, please contact:  Prof. Dr. Orestis Papakyriakopoulos, orestis.p(at)tum.de
+    However, after anonymization, the data can no longer be attributed to an individual. Once anonymization has taken place, it is no longer possible to access, block, or delete the data. For questions regarding data processing and compliance with data protection regulations, the following data protection officer is available:
+    Official Data Protection Officer of the Technical University of Munich
+    Postal address: Arcisstr. 21, 80333 München
+    Phone: 089/289-17052
+    E-Mail: beauftragter@datenschutz.tum.de
+    You also have the right to file a complaint with any data protection supervisory authority. A list of supervisory authorities in Germany can be found at: https://www.bfdi.bund.de/DE/Infothek/Anschriften_Links/anschriften_links-node.html
     """
-    #st.markdown(latex_content)
     stx.scrollableTextbox(content, height = 150)
 
 ## include consent questions plus information about contact
-consent1 = survey.checkbox("I have read the terms and hereby give my consent to participate in the study.")
-consent2 = survey.checkbox("I confirm that I am at least 18 years old.")
+st.subheader("Consent to participate")
+st.write("I have been informed about the study by the study team. I have received and read the written information and consent form for the study mentioned above. I have been thoroughly informed about the purpose and procedure of the study, the chances and risks of participation, and my rights and responsibilities. My consent to participate in the study is voluntary. I have the right to withdraw my consent at any time without giving reasons, and without any disadvantages to myself arising from this.")
+consent1 = survey.checkbox("I hereby consent to participate in the study.")
+st.write("The processing and use of personal data for the study mentioned above will be carried out exclusively as described in the study information. The collected and processed personal data include, in particular, ethnic origin.")
+consent2 = survey.checkbox("I hereby consent to the described processing of my personal data.")
+consent3 = survey.checkbox("I confirm that I am at least 18 years old.")
 
 INSTANCE_CONNECTION_NAME = st.secrets["INSTANCE_CONNECTION_NAME"]
 DB_USER = st.secrets["DB_USER"]
@@ -92,10 +121,10 @@ def insert_participant_and_get_id():
         
         return last_id
 
-if not all([consent1, consent2]):
-    st.write("Please give your consent by ticking both boxes.")
+if not all([consent1, consent2, consent3]):
+    st.write("Please give your consent by ticking all three boxes.")
 
-elif all([consent1, consent2]):
+elif all([consent1, consent2, consent3]):
     if st.button("Let's create a better dataset!"):
         last_inserted_id = insert_participant_and_get_id()
         st.session_state['participant_id'] = last_inserted_id
