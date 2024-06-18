@@ -64,9 +64,20 @@ def insert_editing(participant_id, question_id, prompt_id, answer_edited):
         )
 )
 
+def insert_participant_and_get_id():
+    with pool.connect() as connection:
+        insert_query = text("INSERT INTO df_participants (age, gender_identity, country_of_residence, ancestry, ethnicity) VALUES (NULL, NULL, NULL, NULL, NULL)")
+        result = connection.execute(insert_query)
+        last_id_query = text("SELECT LAST_INSERT_ID()")
+        last_id_result = connection.execute(last_id_query)
+        last_id = last_id_result.scalar()
+        
+        return last_id
+
 def save_to_db():
     if 'participant_id' not in st.session_state:
-        participant_id = 0
+        participant_id = insert_participant_and_get_id()
+        st.session_state['participant_id'] = participant_id
     else:
         participant_id = st.session_state['participant_id']
 
@@ -100,7 +111,7 @@ elif q_discrimination == "Sexual orientation":
 
 excluded_question_ids = [0]
 
-with st.form(key = "form_editi", clear_on_submit= True):
+with st.form(key = "form_edit", clear_on_submit= True):
     with pool.connect() as db_conn:
         query = text("SELECT * FROM df_prompts WHERE question_id NOT IN :excluded_question_ids ORDER BY RAND() LIMIT 1")
         query = query.params(excluded_question_ids=excluded_question_ids)

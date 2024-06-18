@@ -88,9 +88,20 @@ elif q_discrimination == "Sexual orientation":
     type_info = "sexual orientation"
     stereotypical_bias_info = "Stereotypical bias regarding {}: refers to beliefs about a person’s abilities and interests based on their {}. [Source](https://arxiv.org/pdf/2308.05374)".format(type_info, type_info)
 
+def insert_participant_and_get_id():
+    with pool.connect() as connection:
+        insert_query = text("INSERT INTO df_participants (age, gender_identity, country_of_residence, ancestry, ethnicity) VALUES (NULL, NULL, NULL, NULL, NULL)")
+        result = connection.execute(insert_query)
+        last_id_query = text("SELECT LAST_INSERT_ID()")
+        last_id_result = connection.execute(last_id_query)
+        last_id = last_id_result.scalar()
+        
+        return last_id
+
 def save_to_db():
     if 'participant_id' not in st.session_state:
-        participant_id = 0
+        participant_id = insert_participant_and_get_id()
+        st.session_state['participant_id'] = participant_id
     else:
         participant_id = st.session_state['participant_id']
 
