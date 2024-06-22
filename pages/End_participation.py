@@ -1,7 +1,6 @@
 import streamlit as st
 import streamlit_survey as ss
 import json
-import pandas as pd
 from sqlalchemy import text
 from google.cloud.sql.connector import Connector
 from st_files_connection import FilesConnection
