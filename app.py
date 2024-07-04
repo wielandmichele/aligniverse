@@ -3,15 +3,13 @@ import streamlit_survey as ss
 import streamlit_scrollable_textbox as stx
 import json
 import pandas as pd
-from sqlalchemy import text
-from st_files_connection import FilesConnection
+from sqlalchemy import create_engine, text
 import pymysql
 import sqlalchemy
 import os
-
-from google.cloud.sql.connector import Connector
-from google.oauth2 import service_account
-from google.cloud import storage
+import paramiko
+import pymysql
+from sshtunnel import SSHTunnelForwarder
 
 ##set config
 st.set_page_config(initial_sidebar_state="collapsed")
@@ -83,30 +81,45 @@ st.write("The processing and use of personal data for the study mentioned above 
 consent2 = survey.checkbox("I hereby consent to the described processing of my personal data.")
 consent3 = survey.checkbox("I confirm that I am at least 18 years old.")
 
-INSTANCE_CONNECTION_NAME = st.secrets["INSTANCE_CONNECTION_NAME"]
-DB_USER = st.secrets["DB_USER"]
-DB_PASS = st.secrets["DB_PASS"]
-DB_NAME = st.secrets["DB_NAME"]
+# SSH and Database credentials
+ssh_host = st.secrets["ssh_host"]
+ssh_port = st.secrets["ssh_port"]
+ssh_user = st.secrets["ssh_user"]
+ssh_password = st.secrets["ssh_password"]
 
-credentials = service_account.Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"]
+db_host = st.secrets["db_host"]
+db_user = st.secrets["db_user"]
+db_password = st.secrets["db_password"]
+db_name = st.secrets["db_name"]
+db_port = st.secrets["db_port"]
+
+### Set up SSH connection and port forwarding
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect(ssh_host, port=ssh_port, username=ssh_user, password=ssh_password)
+
+# Set up port forwarding
+tunnel = SSHTunnelForwarder(
+    (ssh_host, ssh_port),
+    ssh_username=ssh_user,
+    ssh_password=ssh_password,
+    remote_bind_address=(db_host, db_port)
 )
-client = storage.Client(credentials=credentials)
-connector = Connector(credentials=credentials)
+tunnel.start()
 
+# Function to create a new database connection
 def getconn():
-    # function to return the database connection object
-    conn = connector.connect(
-        INSTANCE_CONNECTION_NAME,
-        "pymysql",
-        user=DB_USER,
-        password=DB_PASS,
-        db=DB_NAME,
+    conn = pymysql.connect(
+        host='127.0.0.1',
+        user=db_user,
+        password=db_password,
+        database=db_name,
+        port=tunnel.local_bind_port
     )
     return conn
 
-# create connection pool
-pool = sqlalchemy.create_engine(
+# Create a SQLAlchemy engine
+pool = create_engine(
     "mysql+pymysql://",
     creator=getconn,
 )
